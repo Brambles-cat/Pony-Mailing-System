@@ -11,13 +11,26 @@
  * while not depriving the voter from confirmation that their votes
  * are fine or should be edited
  */
-function send_voting_results_email(event, cache_sheet_url) {
-  const response_items = event.response.getItemResponses();
-
+function send_voting_results_email(event, cache_sheet_url, test_input=null) {
+  let response_items
+  let responses, email
+  
   // The line below should only be used for the type inference during development
   // const response_items = FormApp.getActiveForm().getResponses()[0].getItemResponses()
 
-  const email = response_items.pop().getResponse()
+  if (test_input) {
+    email = test_input.pop()
+    responses = test_input
+      .filter(url => url !== "")
+  }
+  else {
+    response_items = event.response.getItemResponses();
+    email = response_items.pop().getResponse()
+
+    responses = response_items
+      .filter(response_item => response_item !== "")
+      .map(response_item => response_item.getResponse())
+  }
 
   // TODO: Use a regex to check whether the email can even be used
   // The following should be tested before use
@@ -26,10 +39,6 @@ function send_voting_results_email(event, cache_sheet_url) {
     Logger.log("No email in response")
     return
   }
-
-  const responses = response_items
-    .filter(response_item => response_item !== "")
-    .map(response_item => response_item.getResponse())
 
   const ballot = Fetcher.fetchAll(responses, cache_sheet_url)
   
@@ -69,7 +78,6 @@ function test() {
     "https://www.youtube.com/watch?v=b0B_1YoZMY4",
     "https://www.youtube.com/watch?v=vcgBUBeLWSc",
     "https://www.youtube.com/watch?v=5zQDgayNSGk",
-    "https://www.youtube.com/watch?v=cf57Xsw1K3Y",
     "https://www.youtube.com/watch?v=4CbRYPVw7sA",
     "https://www.youtube.com/watch?v=4WK5chqSwts",
     "https://www.youtube.com/watch?v=hvF28l9M0OA",
@@ -78,7 +86,6 @@ function test() {
     "https://www.youtube.com/watch?v=alSPaZfOrCg",
     "https://www.youtube.com/watch?v=z0pGedFIL7k",
     "https://www.youtube.com/watch?v=b0B_1YoZMY4",
-    "https://www.youtube.com/watch?v=cf57Xsw1K3Y",
     "https://www.youtube.com/watch?v=5zQDgayNSGk",
     "https://www.youtube.com/watch?v=vcgBUBeLWSc",
     "https://www.youtube.com/watch?v=XO3AYMmh6-s",
@@ -122,16 +129,12 @@ function test() {
     "https://youtu.be/a5cmUcJ_8Co?si=81UvXkmnE7obRkL5",
     "https://www.dailymotion.com/video/x7kmdyb",
     "https://youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
-    "https://youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
-    "https://youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
-    "https://youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
     "youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
     "youtu.be", // intentionally leaving in invalid links
-    "www.youtube.com/",
-    "hbdubvufdss"
+    "youtu.be",
+    "hbdubvufdss",
+    "gael.alejos05@gmail.com"
   ]
 
-  const ballot = Fetcher.fetchAll(sample_response, "https://docs.google.com/spreadsheets/d/18aHMyUMGM1z-pZYo4bQ6DrLP8qFQ5EuHSxyQNqZS2Hw/edit#gid=0")
-
-  const invalid_votes = Checks.run_checks(ballot)
+  send_voting_results_email(null, "https://docs.google.com/spreadsheets/d/18aHMyUMGM1z-pZYo4bQ6DrLP8qFQ5EuHSxyQNqZS2Hw/edit#gid=0", sample_response)
 }

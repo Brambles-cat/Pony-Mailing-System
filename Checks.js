@@ -3,15 +3,14 @@ class Checks {
     // Duplicate check is outside of checks just so that
     // the ballot would be pruned of duplicates for the
     // remaining checks
-    let temp = this.user_errs
     ballot = this.check_duplicate(ballot)
 
     const checks = [
       this.check_blacklist,
-      this.check_duration,
-      this.check_upload_date,
+      this.check_durations,
+      this.check_upload_dates,
       this.check_uploader_diversity,
-      this.check_uploader_occurence,
+      this.check_uploader_occurences,
       // this.check_fuzzy
     ]
 
@@ -36,9 +35,8 @@ class Checks {
    * caught per url before the checking phase
    */
   static report_err(url, e) {
-    Logger.log(e.name)
     if (e.name === UserError.name)
-      this.user_errs = [e.message]
+      this.user_errs[url] = [e.message]
     else
       this.other_errs.push(e)
   }
