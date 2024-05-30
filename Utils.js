@@ -78,11 +78,11 @@ class Utils {
         break
 
       default:
-        throw Error(`Invalid source: ${source}`)
+        throw new UserError(`Invalid source: ${source}`)
     }
 
     if (!video_id)
-      throw Error(`Could not extract video ID from "${url}"`)
+      throw new UserError("No video ID found in url")
 
     return [source, video_id]
   }
@@ -99,7 +99,58 @@ class Utils {
     
     if (www_index !== -1)
       netloc = netloc.substring(4)
-
     return netloc
+  }
+
+  /*
+    def _parse_isoformat_date(dtstr):
+    # It is assumed that this is an ASCII-only string of lengths 7, 8 or 10,
+    # see the comment on Modules/_datetimemodule.c:_find_isoformat_datetime_separator
+    assert len(dtstr) in (7, 8, 10)
+    year = int(dtstr[0:4])
+    has_sep = dtstr[4] == '-'
+
+    pos = 4 + has_sep
+    if dtstr[pos:pos + 1] == "W":
+        # YYYY-?Www-?D?
+        pos += 1
+        weekno = int(dtstr[pos:pos + 2])
+        pos += 2
+
+        dayno = 1
+        if len(dtstr) > pos:
+            if (dtstr[pos:pos + 1] == '-') != has_sep:
+                raise ValueError("Inconsistent use of dash separator")
+
+            pos += has_sep
+
+            dayno = int(dtstr[pos:pos + 1])
+
+        return list(_isoweek_to_gregorian(year, weekno, dayno))
+    else:
+        month = int(dtstr[pos:pos + 2])
+        pos += 2
+        if (dtstr[pos:pos + 1] == "-") != has_sep:
+            raise ValueError("Inconsistent use of dash separator")
+
+        pos += has_sep
+        day = int(dtstr[pos:pos + 2])
+
+        return [year, month, day]
+   */
+}
+
+/**
+ * This error class should be used whenever a problem with a user's
+ * input occurs that we have accounted for, so that we can send in the
+ * email response which url in their votes is problematic
+ * Eg. Invalid video source, url without an id, url to an unavailable video
+ * 
+ * Should not be used for anything that the voter cannot resolve
+ */
+class UserError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = UserError.name
   }
 }
