@@ -19,9 +19,10 @@ class Fetcher {
       cache_key = `${source_and_id[0]}-${source_and_id[1]}`
       video_data = cache.get_data(cache_key)
 
-      if (video_data)
+      if (video_data) {
         if (Preferences.v_log_retrieval_method)
           Logger.log(`Retrieved video data from cache for: ${url}`)
+      }
       else {
         if (Preferences.v_log_retrieval_method)
           Logger.log(`Requesting video data from: ${url}`)
@@ -61,7 +62,8 @@ class Fetcher {
       title: video_data.title,
       uploader: video_data.uploader,
       upload_date: video_data.upload_date,
-      duration: video_data.duration
+      duration: video_data.duration,
+      annotations: []
     }
   }
 

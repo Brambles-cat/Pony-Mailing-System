@@ -46,4 +46,7 @@ In order to function, the script requires the following permissions:
 Because of the permissions used, this script should only be used on a form owned by a google account that has no spreadsheets and an empty youtube channel
 
 ## To Do
- 
+ * Parse upload date
+ * Finish checks
+ * Use google spreadsheet for ineligible videos of the current month and blacklisted uploaders
+ * Add fetch service for fetching from other sites and convert fetch services to classes
