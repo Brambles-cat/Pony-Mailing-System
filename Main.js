@@ -46,7 +46,7 @@ function send_voting_results_email(event, cache_sheet_url, ineligible_spreadshee
   if (Object.keys(problematic).length) {
     subject = "Votes Recieved With Issues D:"
     body =
-      "Some issues were detected with your recent votes. Please ensure that all of them follow the voting rules so all your votes count\n\nHere's a list of the detected issues:"
+      "Some issues were detected with your recent votes. Please ensure that they all follow the voting rules so that every vote will count\n\nHere's a list of the detected issues:"
 
     body += Object.entries(problematic).reduce(
       (message, [issue, problematic]) => message +=
@@ -75,7 +75,26 @@ function send_ineligible_video_email_announcement(ineligible_spreadsheet_url) {
  */
 function test() {
   let sample_response = [
-    "www.youtube.com/watch?v=bHB3XshiDc0",
+    "https://www.dailymotion.com/video/x7kmdyb",
+    "https://www.youtube.com/watch?v=zWNz_OSyPvs",
+    "https://www.youtube.com/watch?v=UplHsTfSRn0&list=PLMWOcfiPniiloempheq_xLf3pT6tFO64s&index=6",
+    "https://youtu.be/bHB3XshiDc0?si=xMT84eA_B0p-a8KC",
+    "https://www.bilibili.com/video/BV1UC4y1a76n/",
+    "https://vimeo.com/26189455",
+    "https://vimeo.com/835127314",
+    "https://pony.tube/w/bdxiBw3ETCzeE4y2aeNbYX",
+    "https://pony.tube/w/52bb9a78-df5f-49b9-a8bb-3c64b4bfc12f",
+    "email"
+  ]
+
+  send_voting_results_email(null, "https://docs.google.com/spreadsheets/d/18aHMyUMGM1z-pZYo4bQ6DrLP8qFQ5EuHSxyQNqZS2Hw/edit#gid=0", null, sample_response)
+}
+
+
+
+
+/*
+"www.youtube.com/watch?v=bHB3XshiDc0",
     "https://www.youtube.com/watch?v=q4qyeRAmC94",
     "https://www.youtube.com/watch?v=SUvmldY-EDk",
     "https://www.youtube.com/watch?v=4VKvCJ49gcY",
@@ -91,21 +110,11 @@ function test() {
     "https://youtu.be/HaPXvPK-O3o?si=zJpEARYZf_GC0dAe&test=test",
     "https://www.youtube.com/watch?v=lfjEOQE7DxI",
     "https://youtu.be",
-    "gael.alejos05@gmail.com"
-  ]
 
-  send_voting_results_email(null, "https://docs.google.com/spreadsheets/d/18aHMyUMGM1z-pZYo4bQ6DrLP8qFQ5EuHSxyQNqZS2Hw/edit#gid=0", null, sample_response)
-}
-
-
-
-
-/*
 "www.youtube.com/watch?v=XO3AYMmh6-s",
     "https://www.youtube.com/watch?v=q4qyeRAmC94",
     "https://www.youtube.com/watch?v=JYKEnxKFRh0",
     "https://www.youtube.com/watch?v=SUvmldY-EDk",
-    "https://pony.tube/w/mvc9HMTY4JGDyTp1nPN61N",
     "https://www.youtube.com/watch?v=b7XTGxYCXNQ",
     "https://www.youtube.com/watch?v=alSPaZfOrCg",
     "https://www.youtube.com/watch?v=XO3AYMmh6-s",
@@ -115,9 +124,7 @@ function test() {
     "https://www.youtube.com/watch?v=4WK5chqSwts",
     "https://www.youtube.com/watch?v=WEQq_D9TXM4",
     "www.youtube.com/watch?v=XRHAAEbENbw",
-    "https://www.bilibili.com/video/BV1UC4y1a76n/",
     "https://youtu.be/8wPr9DBlzrw?si=xJE8Yo2fZFUiwT3t",
-    "https://www.bilibili.com/video/BV1Ts411D7XH/?spm_id_from=autoNext",
     "https://youtu.be/WmgzXvjKDSY?si=Wva_MIHXl2zaFy0W",
     "https://youtu.be/7NWN3wivxhA?si=L2ypUWboFNAPbFpy",
     "https://youtu.be/vtQR6FGHHFw?si=qQcmbppYjem5O_sO",
@@ -135,11 +142,10 @@ function test() {
     "https://youtu.be/HaPXvPK-O3o?si=zJpEARYZf_GC0dAe",
     "https://youtu.be/22V3rKriX60?si=e7C_W24i8yd37fDD",
     "youtu.be/a5cmUcJ_8Co?si=81UvXkmnE7obRkL5",
-    "https://www.dailymotion.com/video/x7kmdyb",
     "https://youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
     "youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
     "youtu.be", // intentionally leaving in invalid links
     "youtu.be",
     "hbdubvufdss",
-    "gael.alejos05@gmail.com"
+    "email"
     */
