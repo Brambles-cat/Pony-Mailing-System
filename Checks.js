@@ -27,7 +27,9 @@ class Checks {
       0
     )
 
-    this.user_errs["Eligible votes:"] = [`${eligible_votes} / ${initial_vote_count}`]
+    const skipped_but_probably_eligible = this.skipped_votes - this.skipped_and_failing_votes
+    
+    this.user_errs["Eligible votes:"] = [`${eligible_votes + skipped_but_probably_eligible} / ${initial_vote_count + this.skipped_votes}`]
     
     // compare ballot with no duplicates with user_errs for the 5 votes minimum check
     return this.user_errs
@@ -48,8 +50,10 @@ class Checks {
    * caught per url before the checking phase
    */
   static report_err(url, e) {
-    if (e.name === UserError.name)
+    if (e.name === UserError.name) {
+      this.skipped_and_failing_votes++
       this.user_errs[e.message] = [url]
+    }
     else
       this.other_errs.push(e)
   }
@@ -61,7 +65,19 @@ class Checks {
       this.user_errs[issue] = [problematic]
   }
 
+  // TODO: Make this better, maybe alternate platform aliases should be considered
+  static same_video(video1, video2) {
+    return (
+      video1.title    === video2.title    &&
+      video1.uploader === video2.uploader &&
+      Math.abs(video1.duration - video2.duration) < 2
+    )
+  }
+
   static check_duplicates(ballot) {
+    if (!ballot.length)
+      return []
+  
     const sim_matrix = [[ballot[0]]]
     let found_similar
 
@@ -71,8 +87,7 @@ class Checks {
       for (const sim_array of sim_matrix) {
         if (this.same_video(ballot[i], sim_array[0])) {
           sim_array.push(ballot[i])
-          // ballot[i].annotations.push("duplicate")
-          // likely not needed
+          ballot[i].annotations.push("duplicate")
           found_similar = true
           break
         }
@@ -94,15 +109,6 @@ class Checks {
     return sim_matrix.map(sim_array => sim_array[0])
   }
 
-  // TODO: Make this better, maybe alternate platform aliases should be considered
-  static same_video(video1, video2) {
-    return (
-      video1.title    === video2.title    &&
-      video1.uploader === video2.uploader &&
-      Math.abs(video1.duration - video2.duration) < 2
-    )
-  }
-
   static check_blacklist(ballot) {}
 
   static check_durations(ballot) {
@@ -118,7 +124,28 @@ class Checks {
     })
   }
 
-  static check_upload_dates(ballot) {}
+  static check_upload_dates(ballot) {
+    ballot.forEach(video_data => {
+      const now = new Date()
+      const
+        current_year = now.getUTCFullYear(),
+        upload_year = video_data.upload_date.getUTCFullYear(),
+        current_month = now.getUTCMonth(),
+        upload_month = video_data.upload_date.getUTCMonth()
+
+      if (current_month === 0) {
+        if (current_year - 1 === upload_year && upload_month !== 11)
+          return
+      }
+      else if (current_month - 1 === upload_month && current_year === upload_year)
+        return
+      
+      const issue = current_year === upload_year && current_month === upload_month ? "Video too new" : "Video too old"
+
+      video_data.annotations.push(issue.toLowerCase())
+      Checks.check_fail(`${issue}:`, video_data.url)
+    })
+  }
 
   static check_uploader_diversity(ballot) {
     const s = new Set()
@@ -203,3 +230,5 @@ class Checks {
 
 Checks.user_errs = {}
 Checks.other_errs = []
+Checks.skipped_votes = 0
+Checks.skipped_and_failing_votes = 0
