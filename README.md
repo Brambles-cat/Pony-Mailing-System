@@ -48,7 +48,7 @@ To do this:
 <img width="921" alt="Script steps 2" src="https://github.com/Brambles-cat/Pony-Mailing-System/assets/74834218/e85b1eeb-55da-42f4-b858-e8ab4c2805b4">
 
 ## Alternative Method (Recommended)
-It's impossible to see the source code of an imported library in apps script, so in the spirit of transparency, it is recommended to clone from the GitHub repository into your own apps script project. Using this method would enable others to review changes by one another and be able to contribute while knowing that their changes are truly being used. [Clasp](https://github.com/google/clasp) can be used to do this automatically instead of having to manually copy each of the file contents
+Although it is possible to see the source code of an imported library in Google Apps Script, by using its script ID in https://script.google.com/d/(SCRIPT_ID)/edit?usp=drive_web, this only shows the HEAD deployment (unstable), and may not always reflect the contents of any of the versioned deployments. so in the spirit of full transparency, it is recommended to clone from the GitHub repository into your own apps script project. Using this method would enable others to review changes by one another and be able to contribute while knowing that their changes are truly being used. [Clasp](https://github.com/google/clasp) can be used to do this automatically instead of having to copy each of the file contents manually
 
 ## To Do
  * Finish checks
