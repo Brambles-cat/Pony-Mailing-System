@@ -1,7 +1,7 @@
 [![clasp](https://img.shields.io/badge/clasp-4285f4.svg)](https://github.com/google/clasp) [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?logo=node.js&logoColor=white)](https://nodejs.org/en)
 
 # Pony-Mailing-System
-This project is a Google Apps Script for google forms that sends an email to voters notifying them about their vote eligibilities upon form submission. It uses matching the main voting processor's and fetches video data from an [external service](https://github.com/Brambles-cat/VidDataFetcherEndpoint)
+This project is a Google Apps Script for google forms that sends an email to voters notifying them about their vote eligibilities upon form submission. It uses matching the main voting processor's and fetches video data from an [external service](https://github.com/Brambles-cat/VidDataFetcherEndpoint). The endpoint for fetching video data is currently set with my domain `brambles-c.com`, but would be changed when the actual server is set up
 
 ## Usage
 
