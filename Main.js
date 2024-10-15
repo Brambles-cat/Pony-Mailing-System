@@ -13,139 +13,94 @@
  */
 function send_voting_results_email(event, cache_sheet_url, ineligible_spreadsheet_url=null, test_input=null) {
   let response_items
-  let responses, email
+  let vote_urls, email
   
-  // The line below should only be used for the type inference during development
+  // The line below should only be used for type inference during development
   // const response_items = FormApp.getActiveForm().getResponses()[0].getItemResponses()
 
   if (test_input) {
     email = test_input.pop()
-    responses = test_input
+    vote_urls = test_input
       .filter(url => url !== "")
   }
   else {
     response_items = event.response.getItemResponses();
     email = response_items.pop().getResponse()
 
-    responses = response_items
+    vote_urls = response_items
       .filter(response_item => response_item !== "")
       .map(response_item => response_item.getResponse())
   }
-  
-  if (!email || !email.match("^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$")) {
-    Logger.log("No email in response")
-    return
-  }
 
-  const ballot = Fetcher.fetchAll(responses, cache_sheet_url)
+  const ballot_data = Fetcher.fetchAll(vote_urls, cache_sheet_url)
   
-  const problematic = Checks.run_checks(ballot)
+  const problematic = Checks.run_checks(ballot_data)
 
   let subject, body
 
   if (Object.keys(problematic).length) {
-    subject = "Votes Recieved With Issues D:"
-    body =
-      "Some issues were detected with your recent votes. Please ensure that they all follow the voting rules so that every vote will count\n\nHere's a list of the detected issues:"
+    subject = Config.issue_msg_subject
+    body = Config.issues_msg_body_start
 
     body += Object.entries(problematic).reduce(
       (message, [issue, problematic]) => message +=
       `\n\n${issue}\n${problematic.join("\n")}`,
       ""
     )
+
+    if (Config.issues_msg_body_end)
+      body += "\n\n" + Config.issues_msg_body_end
   }
   else {
-    subject = "Thank You For Voting!"
-    body = "All of your votes appear to be valid, thank you for voting this month!"
+    subject = Config.success_msg_subject
+    body = Config.success_msg_body
   }
+
+  if (Config.log_email_message)
+    Logger.log(`${Config.log_recipient ? email : ""}\n\nsubject:\n${subject}\n\nbody:\n${body}`)
   
-  if (Preferences.v_send_emails)
+  if (!email || !email.match("^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$"))
+    Logger.log("No email in response")
+
+  else if (Config.send_emails)
     GmailApp.sendEmail(email, subject, body)
 
   Checks.throw_remaining_errs()
 }
 
-function send_ineligible_video_email_announcement(ineligible_spreadsheet_url) {
-  Logger.log("not implemented")
-}
-
 /**
- * High likelihood of not doing anything or causing errors
- * outside of development
+ * For development testing purposes. Otherwise likelely of doing
+ * nothing, throwing an error, or something irrelevant
  */
 function test() {
   let sample_response = [
-    "https://www.dailymotion.com/video/x7kmdyb",
-    "https://www.youtube.com/watch?v=zWNz_OSyPvs",
-    "https://www.youtube.com/watch?v=UplHsTfSRn0&list=PLMWOcfiPniiloempheq_xLf3pT6tFO64s&index=6",
-    "https://youtu.be/bHB3XshiDc0?si=xMT84eA_B0p-a8KC",
-    "https://www.bilibili.com/video/BV1UC4y1a76n/",
-    "https://vimeo.com/26189455",
-    "https://vimeo.com/835127314",
-    "https://pony.tube/w/bdxiBw3ETCzeE4y2aeNbYX",
-    "https://pony.tube/w/52bb9a78-df5f-49b9-a8bb-3c64b4bfc12f",
-    "email"
+    "https://youtu.be/XfTdwzwrps8?si=R1HHduyMgNxUeqG0",
+    "https://youtu.be/MvuWUURrxrY?si=_oaf04Fm0TntV_oA",
+    "https://youtu.be/jAxDVnxWhSY?si=qzJH2fhjW46pXiCJ",
+    "https://youtu.be/fZC5O8j90bs?si=RJJ1yXJLf4KNqplH",
+    "https://youtu.be/9mgwO3lJoak?si=f5XkP8t7i0ZDIBMl",
+    "https://youtu.be/qJFbWTs5Ns0?si=95iZZBigU1ZQ2hwl",
+    "https://youtu.be/GhgzoCabbek?si=_XjdkJmOo77PGISo",
+    "https://youtu.be/kLX02wYrigc?si=ANepQHJi9aa94Ko7",
+    "https://youtu.be/8X1aksLwy3g?si=9hSk3g7I1yWop1lq",
+    "https://youtu.be/_rPieklFf1s?si=XoFWanGqNp8Dj88c",
+    "https://youtu.be/ZK9_7PtUgRI?si=dQcmsMVJT9-WF80F",
+    "gael.alejos05@gmail.com"
   ]
 
-  send_voting_results_email(null, "https://docs.google.com/spreadsheets/d/18aHMyUMGM1z-pZYo4bQ6DrLP8qFQ5EuHSxyQNqZS2Hw/edit#gid=0", null, sample_response)
+  let june_videos = [
+    'https://www.youtube.com/watch?v=gWDhSsvB7RM&t=0s',
+    'https://www.youtube.com/watch?v=hr0j-i7t61g&t=0s',
+    'https://www.youtube.com/watch?v=tNqcUv3rxdI&t=0s',
+    'https://www.youtube.com/watch?v=fZC5O8j90bs&t=0s',
+    'https://www.youtube.com/watch?v=_rPieklFf1s&t=0s',
+    'https://www.youtube.com/watch?v=qJFbWTs5Ns0&t=0s',
+    'https://www.youtube.com/watch?v=XfTdwzwrps8&t=0s',
+    'https://www.youtube.com/watch?v=MvuWUURrxrY&t=0s',
+    'https://www.youtube.com/watch?v=8X1aksLwy3g&t=0s',
+    'https://www.youtube.com/watch?v=no7rLTL68Tw&t=0s',
+    'gael.alejos05@gmail.com'
+  ]
+
+  send_voting_results_email(null, "https://docs.google.com/spreadsheets/d/18aHMyUMGM1z-pZYo4bQ6DrLP8qFQ5EuHSxyQNqZS2Hw/edit#gid=0", null, june_videos)
 }
-
-
-
-
-/*
-"www.youtube.com/watch?v=bHB3XshiDc0",
-    "https://www.youtube.com/watch?v=q4qyeRAmC94",
-    "https://www.youtube.com/watch?v=SUvmldY-EDk",
-    "https://www.youtube.com/watch?v=4VKvCJ49gcY",
-    "https://www.youtube.com/watch?v=4VKvCJ49gcY",
-    "https://www.youtube.com/watch?v=ZPpTBzy3M2o",
-    "https://youtu.be/HaPXvPK-O3o?si=zJpEARYZf_GC0dAe",
-    "https://youtu.be/HaPXvPK-O3o?si=testingtest",
-    "https://www.youtube.com/watch?v=JYKEnxKFRh0",
-    "https://www.youtube.com/watch?v=B6mWSS2CSQ8",
-    "https://www.youtube.com/watch?v=o0T16Czgshg&list=LL&index=14",
-    "https://www.youtube.com/watch?v=NNla7ai3GLs&list=LL&index=50",
-    "https://www.youtube.com/watch?v=Qx2hokSdku8",
-    "https://youtu.be/HaPXvPK-O3o?si=zJpEARYZf_GC0dAe&test=test",
-    "https://www.youtube.com/watch?v=lfjEOQE7DxI",
-    "https://youtu.be",
-
-"www.youtube.com/watch?v=XO3AYMmh6-s",
-    "https://www.youtube.com/watch?v=q4qyeRAmC94",
-    "https://www.youtube.com/watch?v=JYKEnxKFRh0",
-    "https://www.youtube.com/watch?v=SUvmldY-EDk",
-    "https://www.youtube.com/watch?v=b7XTGxYCXNQ",
-    "https://www.youtube.com/watch?v=alSPaZfOrCg",
-    "https://www.youtube.com/watch?v=XO3AYMmh6-s",
-    "www.youtube.com/watch?v=5zQDgayNSGk",
-    "https://www.youtube.com/watch?v=XO3AYMmh6-s",
-    "https://www.youtube.com/watch?v=_v8vIcOYw2U",
-    "https://www.youtube.com/watch?v=4WK5chqSwts",
-    "https://www.youtube.com/watch?v=WEQq_D9TXM4",
-    "www.youtube.com/watch?v=XRHAAEbENbw",
-    "https://youtu.be/8wPr9DBlzrw?si=xJE8Yo2fZFUiwT3t",
-    "https://youtu.be/WmgzXvjKDSY?si=Wva_MIHXl2zaFy0W",
-    "https://youtu.be/7NWN3wivxhA?si=L2ypUWboFNAPbFpy",
-    "https://youtu.be/vtQR6FGHHFw?si=qQcmbppYjem5O_sO",
-    "https://www.youtube.com/watch?v=1FwtC-1bpx0&list=PLx2GQaX8C7Wgj6CWD7ZtAy3OL5jtvswZ1&index=3",
-    "https://youtu.be/8wPr9DBlzrw?si=xJE8Yo2fZFUiwT3t",
-    "youtu.be/DL5e5-6CpAw?si=Hco0v4rpCKTZS6_e",
-    "https://youtu.be/HaPXvPK-O3o?si=zJpEARYZf_GC0dAe",
-    "https://youtu.be/22V3rKriX60?si=e7C_W24i8yd37fDD",
-    "https://youtu.be/Q-U-Jo9aWtE?si=YYaBy3nbk4oB4tO0",
-    "https://youtu.be/dEBvE3zGHbU?si=mhiZWKEKfbxnMPWo",
-    "https://youtu.be/vtQR6FGHHFw?si=qQcmbppYjem5O_sO",
-    "https://youtu.be/ed0LUVzYDk8?si=bKNNHBou9o_vMmtZ",
-    "https://youtu.be/DL5e5-6CpAw?si=Hco0v4rpCKTZS6_e",
-    "https://youtu.be/HaPXvPK-O3o?si=zJpEARYZf_GC0dAe",
-    "https://youtu.be/HaPXvPK-O3o?si=zJpEARYZf_GC0dAe",
-    "https://youtu.be/22V3rKriX60?si=e7C_W24i8yd37fDD",
-    "youtu.be/a5cmUcJ_8Co?si=81UvXkmnE7obRkL5",
-    "https://youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
-    "youtu.be/94OxnCnABZA?si=UBEiVnFy-4BXz4b4",
-    "youtu.be", // intentionally leaving in invalid links
-    "youtu.be",
-    "hbdubvufdss",
-    "email"
-    */

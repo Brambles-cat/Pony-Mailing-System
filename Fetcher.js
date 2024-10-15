@@ -5,10 +5,24 @@ class Fetcher {
    * metadata will be cached for future retrieval
    */
   static fetchAll(urls, cache_url) {
-    let video_data, vid_address, cache_key, parsed_video_data
-    const ballot = [], cache = new Cache(cache_url)
+    let ballot_data = [] //, vid_address, cache_key, parsed_video_data
+    // const ballot = [], cache = new Cache(cache_url)
 
-    for (const url of urls) {
+    const options = {
+      'method' : 'post',
+      'contentType': 'application/json',
+      'payload' : JSON.stringify(urls)
+    };
+
+    ballot_data = JSON.parse(UrlFetchApp.fetch("https://brambles-c.com/fetch", options).getContentText())
+
+    for (const index in ballot_data) {
+      ballot_data[index].upload_date = new Date(ballot_data[index].upload_date)
+      ballot_data[index].annotations = []
+      ballot_data[index].url = urls[index]
+    }
+
+    /*for (const url of urls) {
       
       try { vid_address = Utils.get_video_address(url) }
 
@@ -52,9 +66,9 @@ class Fetcher {
       parsed_video_data.url = url
 
       ballot.push(parsed_video_data)
-    }
+    }*/
 
-    return ballot
+    return ballot_data
   }
 
   /**

@@ -1,35 +1,41 @@
 class Checks {
-  static run_checks(ballot) {
-    const initial_vote_count = ballot.length
+  static run_checks(ballot_data) {
+    const initial_vote_count = ballot_data.length
 
     // Duplicate check is outside of checks just so that
     // the ballot would be pruned of duplicates for the
     // remaining checks
-    ballot = this.check_duplicates(ballot)
+    ballot_data = this.check_duplicates(ballot_data)
 
     const checks = [
       this.check_blacklist,
       this.check_durations,
       this.check_upload_dates,
       this.check_uploader_diversity,
+      this.check_other,
+      // this.check_fuzzy,
 
       // Must be last since fail annotation should be applied
       // to a vote with another annotation first if present
-      this.check_uploader_occurences,
-      // this.check_fuzzy
+      this.check_uploader_occurences
     ]
 
-    checks.forEach(check => check(ballot))
+    checks.forEach(check => check(ballot_data))
 
-    let eligible_votes = ballot.length
-    eligible_votes -= ballot.reduce(
+    if (Config.log_detected_vote_eligibility)
+      ballot_data.forEach(video_data => {
+        Logger.log(`${video_data.url} : ${video_data.annotations.length === 0 ? "eligible" : video_data.annotations.join("")}`)
+      })
+
+    let eligible_votes = ballot_data.length
+    eligible_votes -= ballot_data.reduce(
       (sum, next_vote) => sum + (next_vote.annotations.length !== 0),
       0
     )
 
-    const skipped_but_probably_eligible = this.skipped_votes - this.skipped_and_failing_votes
+    const assumed_eligible = eligible_votes + this.skipped_votes - this.skipped_and_failing_votes
     
-    this.user_errs["Eligible votes:"] = [`${eligible_votes + skipped_but_probably_eligible} / ${initial_vote_count + this.skipped_votes}`]
+    this.user_errs["Eligible votes:"] = [`${assumed_eligible < 5 ? 0 : assumed_eligible} / ${initial_vote_count + this.skipped_votes}`]
     
     // compare ballot with no duplicates with user_errs for the 5 votes minimum check
     return this.user_errs
@@ -65,12 +71,12 @@ class Checks {
       this.user_errs[issue] = [problematic]
   }
 
-  // TODO: Make this better, maybe alternate platform aliases should be considered
+  // TODO: Maybe alternate platform aliases should also be considered
   static same_video(video1, video2) {
     return (
       video1.title    === video2.title    &&
       video1.uploader === video2.uploader &&
-      Math.abs(video1.duration - video2.duration) < 2
+      Math.abs(video1.duration - video2.duration) < 3
     )
   }
 
@@ -109,6 +115,7 @@ class Checks {
     return sim_matrix.map(sim_array => sim_array[0])
   }
 
+  // TODO
   static check_blacklist(ballot) {}
 
   static check_durations(ballot) {
@@ -118,7 +125,6 @@ class Checks {
         Checks.check_fail("Too short:", video_data.url)
       }
       else if (video_data.duration <= 45) {
-        video_data.annotations.push("may be too short")
         Checks.check_fail("May be too short:", video_data.url)
       }
     })
@@ -145,6 +151,16 @@ class Checks {
       video_data.annotations.push(issue.toLowerCase())
       Checks.check_fail(`${issue}:`, video_data.url)
     })
+  }
+
+  /**
+   * Check against a spreadsheet of ineligible pony videos that are likely to
+   * be voted for despite violating a rule that can't be automatically checked
+   * for. e.g. pony art slideshows
+   */
+  static check_other(ballot) {
+    // TODO
+    ballot.forEach(video_data => {})
   }
 
   static check_uploader_diversity(ballot) {

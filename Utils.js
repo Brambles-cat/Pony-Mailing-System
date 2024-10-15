@@ -17,44 +17,6 @@ class Utils {
     return [key, separater, str.substring(separater.length + key.length)]
   }
 
-  static parseISO8601Duration(duration) {
-      var matches = duration.match(/T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-      
-      var hours = parseInt(matches[1]) || 0;
-      var minutes = parseInt(matches[2]) || 0;
-      var seconds = parseInt(matches[3]) || 0;
-
-      return seconds + minutes * 60 + hours * 3600;
-  }
-
-  static convert_iso8601_duration_to_seconds(iso8601str) {
-    if (iso8601str.startsWith("PT"))
-      iso8601str = iso8601str.substring(2)
-    
-    let split, total_seconds = 0, hours = 0, minutes = 0, seconds = 0
-
-    if (iso8601str.includes("H")) {
-      split = iso8601str.split("H")
-      iso8601str = split[1]
-      hours = parseInt(split[0])
-    }
-
-    if (iso8601str.includes("M")) {
-      split = iso8601str.split("M")
-      iso8601str = split[1]
-      minutes = parseInt(split[0])
-    }
-
-    if (iso8601str.includes("S")) {
-      iso8601str = iso8601str.replace("S", "")
-      seconds = parseInt(iso8601str)
-    }
-
-    total_seconds = hours * 3600 + minutes * 60 + seconds
-
-    return total_seconds
-  }
-
   static get_video_address(url) {
     let video_id
     const url_components = URL_Parser.parse_url(url)
@@ -140,43 +102,6 @@ class Utils {
       netloc = netloc.substring(4)
     return netloc
   }
-
-  /*
-    def _parse_isoformat_date(dtstr):
-    # It is assumed that this is an ASCII-only string of lengths 7, 8 or 10,
-    # see the comment on Modules/_datetimemodule.c:_find_isoformat_datetime_separator
-    assert len(dtstr) in (7, 8, 10)
-    year = int(dtstr[0:4])
-    has_sep = dtstr[4] == '-'
-
-    pos = 4 + has_sep
-    if dtstr[pos:pos + 1] == "W":
-        # YYYY-?Www-?D?
-        pos += 1
-        weekno = int(dtstr[pos:pos + 2])
-        pos += 2
-
-        dayno = 1
-        if len(dtstr) > pos:
-            if (dtstr[pos:pos + 1] == '-') != has_sep:
-                raise ValueError("Inconsistent use of dash separator")
-
-            pos += has_sep
-
-            dayno = int(dtstr[pos:pos + 1])
-
-        return list(_isoweek_to_gregorian(year, weekno, dayno))
-    else:
-        month = int(dtstr[pos:pos + 2])
-        pos += 2
-        if (dtstr[pos:pos + 1] == "-") != has_sep:
-            raise ValueError("Inconsistent use of dash separator")
-
-        pos += has_sep
-        day = int(dtstr[pos:pos + 2])
-
-        return [year, month, day]
-   */
 }
 
 /**
