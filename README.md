@@ -1,5 +1,18 @@
+[![clasp](https://img.shields.io/badge/built%20with-clasp-4285f4.svg)](https://github.com/google/clasp)
 # Pony-Mailing-System
 This project is a Google Apps Script with most of the main parts being a translation of parts of the pony voting processor.
+
+## Permissions
+[Authorization scope source](https://developers.google.com/identity/protocols/oauth2/scopes)
+
+In order to function, the script requires the following permissions:
+* View your YouTube account
+* See, edit, create, and delete all your Google Sheets spreadsheets
+* View and manage forms that this application has been installed in
+* Send email on your behalf
+* Connect to an external service
+
+Because of the permissions used, this script should only be used on a form owned by a Google account that has no spreadsheets and an empty YouTube channel
 
 ## Usage
 In a form with only short answer boxes, you can attach a script to it by using the script editor button as seen in the image below
@@ -34,19 +47,10 @@ To do this:
 
 <img width="921" alt="Script steps 2" src="https://github.com/Brambles-cat/Pony-Mailing-System/assets/74834218/e85b1eeb-55da-42f4-b858-e8ab4c2805b4">
 
-## Permissions
-[Authorization scope source](https://developers.google.com/identity/protocols/oauth2/scopes)
-
-In order to function, the script requires the following permissions:
-* View your YouTube account
-* See, edit, create, and delete all your Google Sheets spreadsheets
-* View and manage forms that this application has been installed in
-* Send email on your behalf
-
-Because of the permissions used, this script should only be used on a form owned by a google account that has no spreadsheets and an empty youtube channel
+## Alternative Method (Recommended)
+Although it is possible to see the source code of an imported library in Google Apps Script, by using its script ID in https://script.google.com/d/(SCRIPT_ID)/edit?usp=drive_web, this only shows the HEAD deployment (unstable), and may not always reflect the contents of any of the versioned deployments. so in the spirit of full transparency, it is recommended to clone from the GitHub repository into your own apps script project. Using this method would enable others to review changes by one another and be able to contribute while knowing that their changes are truly being used. [Clasp](https://github.com/google/clasp) can be used to do this automatically instead of having to copy each of the file contents manually
 
 ## To Do
- * Parse upload date
  * Finish checks
- * Use google spreadsheet for ineligible videos of the current month and blacklisted uploaders
- * Add fetch service for fetching from other sites and convert fetch services to classes
+ * Use Google spreadsheet for ineligible videos of the current month and blacklisted uploaders
+ * A how-to on how to use Clasp for previously stated purposes
