@@ -85,7 +85,7 @@ function test() {
     "https://youtu.be/8X1aksLwy3g?si=9hSk3g7I1yWop1lq",
     "https://youtu.be/_rPieklFf1s?si=XoFWanGqNp8Dj88c",
     "https://youtu.be/ZK9_7PtUgRI?si=dQcmsMVJT9-WF80F",
-    "gael.alejos05@gmail.com"
+    "test recipient email addres"
   ]
 
   let june_videos = [
@@ -99,7 +99,7 @@ function test() {
     'https://www.youtube.com/watch?v=MvuWUURrxrY&t=0s',
     'https://www.youtube.com/watch?v=8X1aksLwy3g&t=0s',
     'https://www.youtube.com/watch?v=no7rLTL68Tw&t=0s',
-    'gael.alejos05@gmail.com'
+    'test recipient email address'
   ]
 
   send_voting_results_email(null, "https://docs.google.com/spreadsheets/d/18aHMyUMGM1z-pZYo4bQ6DrLP8qFQ5EuHSxyQNqZS2Hw/edit#gid=0", null, june_videos)
