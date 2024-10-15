@@ -11,6 +11,7 @@ This project is a Google Apps Script for google forms that sends an email to vot
 <img width="295" alt="Script_btn" src="https://github.com/Brambles-cat/Pony-Mailing-System/assets/74834218/37f9796d-5e0c-46d0-be5a-db64851c7ba4">
 
 ### Set Timezone and Configure clasp
+* Rename the .json files by removing `.template` from them
 * Set the timezone in `appsscript.json` (e.g., America/Los_Angeles)
 * Configure `.clasp.json` with the proper `rootDir` and the script ID. The script ID can be found in the Apps Script project settings.
 
