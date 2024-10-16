@@ -24,7 +24,7 @@ class Checks {
 
     if (Config.log_detected_vote_eligibility)
       ballot_data.forEach(video_data => {
-        Logger.log(`${video_data.url} : ${video_data.annotations.length === 0 ? "eligible" : video_data.annotations.join("")}`)
+        Logger.log(`${video_data.url} : ${video_data.annotations.length === 0 ? "eligible" : video_data.annotations.join(", ")}`)
       })
 
     let eligible_votes = ballot_data.length

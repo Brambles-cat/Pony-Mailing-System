@@ -5,7 +5,7 @@ class Config {}
 // Whether or not the vote eligibility emails should be sent to voters
 Config.send_emails                   = true
 
-// TODO : Log each of the votes detected eligibility status and annotations
+// Log each of the votes detected eligibility status and annotations
 Config.log_detected_vote_eligibility = false
 
 // Log the recipent of the sent or would-be sent email
